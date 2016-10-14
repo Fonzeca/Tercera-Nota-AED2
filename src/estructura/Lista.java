@@ -44,13 +44,11 @@ public class Lista implements ILista{
 	public void insertarReordenar(NodoHuffman nodo){
 		if(primero== null){
 			primero = new Nodo(nodo, null);
-		}else if (primero.getRef()==null){
-			if(nodo.getOcurrencia() < primero.getInfo().getOcurrencia()){
+		}else if(nodo.getOcurrencia() < primero.getInfo().getOcurrencia()){
 				Nodo aux = primero;
 				primero = new Nodo(nodo, aux);
-			}else{
+		}else if(primero.getRef() == null && nodo.getOcurrencia() > primero.getInfo().getOcurrencia()){
 				primero.setRef(new Nodo(nodo, null));
-			}
 		}else{
 			Nodo auxAnterior = primero, aux = primero.getRef();
 			while(aux!= null){

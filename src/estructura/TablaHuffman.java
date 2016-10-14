@@ -47,7 +47,7 @@ public class TablaHuffman implements ITablaHuffman{
 		
 		return null;
 	}
-
+	//devuelve el nodo en la posicion "index".
 	public NodoTablaHuffman get(int index){
 		int contador= 0;
 		NodoTablaHuffman aux = pri;

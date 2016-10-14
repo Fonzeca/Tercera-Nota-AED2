@@ -32,7 +32,10 @@ public class Codificador {
 				
 				String byteComprimido=th.buscar(aux);
 				
+				
 				escribirBytes(byteComprimido);
+				
+				
 				
 			}
 			
