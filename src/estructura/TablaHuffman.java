@@ -18,8 +18,7 @@ public class TablaHuffman implements ITablaHuffman{
 			insertar(p.dato,ruta,p.ocurrencia);
 		}
 		if(p.izq!=null){
-				recorrerArbolRecursivo(p.izq, ruta+"0");
-				
+			recorrerArbolRecursivo(p.izq, ruta+"0");
 		}
 		if(p.der!=null){
 		
@@ -48,12 +47,16 @@ public class TablaHuffman implements ITablaHuffman{
 		
 		return null;
 	}
-	public NodoTablaHuffman getPrimero(){
+
+	public NodoTablaHuffman get(int index){
+		int contador= 0;
 		NodoTablaHuffman aux = pri;
-		if(pri == null){
-			return null;
-		}else{
-			pri = pri.getSiguiente();
+		while(aux != null){
+			if(index == contador){
+				return aux;
+			}
+			aux = aux.getSiguiente();
+			contador++;
 		}
 		return aux;
 	}

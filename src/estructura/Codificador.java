@@ -28,21 +28,22 @@ public class Codificador {
 			//Escritura de bytes comprimidos.
 			
 			byte aux;
-			while((aux=original.readByte())!=-1){
+			while((aux=(byte) original.read())!=-1){
 				
 				String byteComprimido=th.buscar(aux);
-				escribirBytes(byteComprimido);
 				
+				escribirBytes(byteComprimido);
 				
 			}
 			
-			
+			comprimido.write(byteNuevo);
 			
 			//Tamaño de este archivo
 			comprimido.seek(14);
 			guardarDWord(comprimido.length());
+			original.close();
 		}catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -73,8 +74,7 @@ public class Codificador {
 			comprimido.seek(18);
 			comprimido.write(th.getTamaño());
 			for (int i=0;i<th.getTamaño();i++){
-				NodoTablaHuffman nodoHuffman= th.getPrimero();
-				comprimido.write(nodoHuffman.getDato());
+				NodoTablaHuffman nodoHuffman= th.get(i);				comprimido.write(nodoHuffman.getDato());
 				guardarDWord(nodoHuffman.getOcurrencia());
 			}
 			long posicionCompri = comprimido.getFilePointer();
@@ -115,48 +115,47 @@ public class Codificador {
 
 		for (int i=0; i<byteComprimido.length();i++){
 
-			if(byteComprimido.charAt(i)==1){
+			if(byteComprimido.charAt(i)=='1'){
 
 				switch(contador){
 				case 0:
-					byteNuevo=(byte) (byteNuevo & 0x80);
+					byteNuevo=(byte) (byteNuevo | 0x80);
 					break;
 				case 1:
-					byteNuevo=(byte) (byteNuevo & 0x40);
+					byteNuevo=(byte) (byteNuevo | 0x40);
 					break;
 				case 2:
-					byteNuevo=(byte) (byteNuevo & 0x20);
+					byteNuevo=(byte) (byteNuevo | 0x20);
 					break;
 				case 3:
-					byteNuevo=(byte) (byteNuevo & 0x10);
+					byteNuevo=(byte) (byteNuevo | 0x10);
 					break;
 				case 4:
-					byteNuevo=(byte) (byteNuevo & 0x8);
+					byteNuevo=(byte) (byteNuevo | 0x8);
 					break;
 				case 5:
-					byteNuevo=(byte) (byteNuevo & 0x4);
+					byteNuevo=(byte) (byteNuevo | 0x4);
 					break;
 				case 6:
-					byteNuevo=(byte) (byteNuevo & 0x2);
+					byteNuevo=(byte) (byteNuevo | 0x2);
 					break;
 				case 7:
-					byteNuevo=(byte) (byteNuevo & 0x1);
+					byteNuevo=(byte) (byteNuevo | 0x1);
 					break;
 				}
 			}
-		}
-		contador++;
-		if (contador==8){
-			try{
-				comprimido.write(byteNuevo);
-				contador=0;
-				byteNuevo=0;
-			}catch(Exception e){
-				System.err.println(e);
+			contador++;
+			if (contador==8){
+				try{
+					comprimido.write(byteNuevo);
+					contador=0;
+					byteNuevo=0;
+				}catch(Exception e){
+					System.err.println(e);
+				}
+				
 			}
-
 		}
-
 	}
 
 }
