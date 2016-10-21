@@ -13,8 +13,8 @@ public class Principal {
 		Lista lis = lector.getLista();
 		
 		Lista original =new Lista();
-		original.setTamaño(lis.getTamaño());
-		for(int i = 0; i < lis.getTamaño(); i++){
+		original.setTamaÃ±o(lis.getTamaÃ±o());
+		for(int i = 0; i < lis.getTamaÃ±o(); i++){
 			original.insertarReordenar(lis.get(i));
 		}
 		
@@ -28,7 +28,7 @@ public class Principal {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		aux = new File("src/recursos/archivo.ext").getAbsolutePath();
+		aux = new File("src/recursos/archivo.c21").getAbsolutePath();
 		try {
 
 			Decodificador deco  = new Decodificador(new RandomAccessFile(aux, "rw"), aux);
