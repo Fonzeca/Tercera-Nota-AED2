@@ -20,8 +20,6 @@ public class LectorArchivo {
 		try {
 			for (int i = 0; i < raf.length(); i++) {
 				lista.insertar(raf.readByte());
-				
-				
 			}
 		} catch (Exception e) {
 			System.err.println("Archivo no encontrado.");

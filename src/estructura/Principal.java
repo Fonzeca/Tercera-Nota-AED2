@@ -1,37 +1,45 @@
 package estructura;
 
-import visual.Ventana;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
 
 public class Principal {
 
 	public static void main(String[] args) {
-
-		String aux = new File("src/recursos/cod.txt").getAbsolutePath();
-		
+		String aux = new File("src/recursos/archivo.ext").getAbsolutePath();
 		LectorArchivo lector = new LectorArchivo(aux);
 		lector.leerArchivo();
 		Lista lis = lector.getLista();
+		
+		Lista original =new Lista();
+		original.setTamaño(lis.getTamaño());
+		for(int i = 0; i < lis.getTamaño(); i++){
+			original.insertarReordenar(lis.get(i));
+		}
+		
+		
 		ArbolHuffman ah = new ArbolHuffman(lis);
 		TablaHuffman th = new TablaHuffman(ah);
 		Codificador cod = null;
 		try {
-			 cod = new Codificador(new RandomAccessFile(aux, "rw"), aux, th);
+			cod = new Codificador(new RandomAccessFile(aux, "rw"), aux, th, original);
 			cod.codificar();
 		} catch (FileNotFoundException e) {
-			System.out.println("SHE LOCO");
 			e.printStackTrace();
 		}
-		aux = new File("src/recursos/cod.c21").getAbsolutePath();
+		aux = new File("src/recursos/archivo.ext").getAbsolutePath();
 		try {
+
 			Decodificador deco  = new Decodificador(new RandomAccessFile(aux, "rw"), aux);
 			deco.creardescomprimido();
-			System.out.println(deco.leerDWord(10));
 			deco.armarTabla();
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
-			
+
 		}
-		
+
+
 	}
 
 }

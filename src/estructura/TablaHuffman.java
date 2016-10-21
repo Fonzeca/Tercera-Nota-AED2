@@ -21,7 +21,6 @@ public class TablaHuffman implements ITablaHuffman{
 			recorrerArbolRecursivo(p.izq, ruta+"0");
 		}
 		if(p.der!=null){
-		
 			recorrerArbolRecursivo(p.der,ruta+"1");
 		}
 		
@@ -46,6 +45,26 @@ public class TablaHuffman implements ITablaHuffman{
 		}
 		
 		return null;
+	}	
+	public boolean existe(String x) {
+		NodoTablaHuffman aux = pri;
+		while(aux!= null){
+			if(aux.getByteAcotado().equals(x)){
+				return true;
+			}
+			aux = aux.getSiguiente();
+		}
+		return false;
+	}
+	public byte buscarAcotado(String x) {
+		NodoTablaHuffman aux = pri;
+		while(aux!= null){
+			if(aux.getByteAcotado().equals(x)){
+				return aux.getDato();
+			}
+			aux = aux.getSiguiente();
+		}
+		return (Byte) null;
 	}
 	//devuelve el nodo en la posicion "index".
 	public NodoTablaHuffman get(int index){
@@ -59,6 +78,16 @@ public class TablaHuffman implements ITablaHuffman{
 			contador++;
 		}
 		return aux;
+	}
+	
+	public void mostrar(){
+		NodoTablaHuffman aux = pri;
+		int c = 1;
+		while(aux != null){
+			System.out.println(c + ") Dato: " + aux.getDato() + "\tByte acotado: " + aux.getByteAcotado()+"\tOcurrencia: " + aux.getOcurrencia());
+			aux = aux.getSiguiente();
+			c++;
+		}
 	}
 
 }

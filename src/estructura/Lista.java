@@ -2,10 +2,12 @@ package estructura;
 
 public class Lista implements ILista{
 	Nodo primero;
+	int tamaño = 0;
 
 	public void insertar(byte info){
 		if(primero== null){
 			primero = new Nodo(info, null);
+			tamaño++;
 		}else{
 			Nodo aux = primero;
 			while(aux!= null){
@@ -14,11 +16,13 @@ public class Lista implements ILista{
 					break;
 				}else if (aux.getRef()== null){
 					aux.setRef(new Nodo(info, null));
+					tamaño++;
 					break;
 				}
 				aux = aux.getRef();
 			}
-		}	
+		}
+		
 	}
 	public void reordenar(){
 		Lista listaAux = new Lista();
@@ -32,6 +36,15 @@ public class Lista implements ILista{
 
 		primero = listaAux.getPrimero();
 
+	}
+	
+	
+	
+	public int getTamaño() {
+		return tamaño;
+	}
+	public void setTamaño(int tamaño) {
+		this.tamaño = tamaño;
 	}
 	public Nodo getPrimero() {
 		return this.primero;
@@ -47,7 +60,7 @@ public class Lista implements ILista{
 		}else if(nodo.getOcurrencia() < primero.getInfo().getOcurrencia()){
 				Nodo aux = primero;
 				primero = new Nodo(nodo, aux);
-		}else if(primero.getRef() == null && nodo.getOcurrencia() > primero.getInfo().getOcurrencia()){
+		}else if(primero.getRef() == null && nodo.getOcurrencia() >= primero.getInfo().getOcurrencia()){
 				primero.setRef(new Nodo(nodo, null));
 		}else{
 			Nodo auxAnterior = primero, aux = primero.getRef();
@@ -63,12 +76,27 @@ public class Lista implements ILista{
 				auxAnterior = aux;
 				aux = aux.getRef();
 			}
-		}	
+		}
+		
 	}
+	
+	public NodoHuffman get(int index){
+		int contador= 0;
+		Nodo aux = primero;
+		while(aux != null){
+			if(index == contador){
+				return aux.getInfo();
+			}
+			aux = aux.getRef();
+			contador++;
+		}
+		return aux.getInfo();
+	}
+	
 	public void mostrar(){
 		Nodo aux = primero;
 		while (aux!=null){
-			System.out.println("dato: "+ aux.getInfo().getDato()+", ocurrencia: "+aux.getInfo().getOcurrencia());
+			System.out.println("dato: " + aux.getInfo().getDato() +", ocurrencia: "+aux.getInfo().getOcurrencia());
 			aux = aux.getRef();
 		}
 	}

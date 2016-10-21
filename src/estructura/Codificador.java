@@ -10,14 +10,16 @@ public class Codificador {
 	private byte byteNuevo=0;
 	private String ruta;
 	private RandomAccessFile comprimido,original;
-	ITablaHuffman th=null;
+	private ITablaHuffman th=null;
+	private Lista lista;
 
-	public Codificador(RandomAccessFile original,String ruta,ITablaHuffman th){
+	public Codificador(RandomAccessFile original,String ruta,ITablaHuffman th, Lista lista){
 
 		this.original=original;
 		this.ruta= ruta;
 		crearArchivo();
 		this.th=th;
+		this.lista = lista;
 	}
 
 	public void codificar( ){
@@ -27,16 +29,10 @@ public class Codificador {
 			escribirCabecera();
 			//Escritura de bytes comprimidos.
 			
-			byte aux;
-			while((aux=(byte) original.read())!=-1){
-				
-				String byteComprimido=th.buscar(aux);
-				
-				
+			int aux;
+			while((aux=original.read())!=-1){
+				String byteComprimido=th.buscar((byte)aux);
 				escribirBytes(byteComprimido);
-				
-				
-				
 			}
 			
 			comprimido.write(byteNuevo);
@@ -75,9 +71,10 @@ public class Codificador {
 			//posición comienzo de los datos comprimidos
 
 			comprimido.seek(18);
-			comprimido.write(th.getTamaño());
-			for (int i=0;i<th.getTamaño();i++){
-				NodoTablaHuffman nodoHuffman= th.get(i);				comprimido.write(nodoHuffman.getDato());
+			comprimido.write(lista.getTamaño()-1);
+			for (int i=0;i<lista.getTamaño();i++){
+				NodoHuffman nodoHuffman = lista.get(i);
+				comprimido.write(nodoHuffman.getDato());
 				guardarDWord(nodoHuffman.getOcurrencia());
 			}
 			long posicionCompri = comprimido.getFilePointer();
@@ -115,11 +112,11 @@ public class Codificador {
 	}
 	
 	public void escribirBytes(String byteComprimido){
-
+		
 		for (int i=0; i<byteComprimido.length();i++){
-
+			
 			if(byteComprimido.charAt(i)=='1'){
-
+				
 				switch(contador){
 				case 0:
 					byteNuevo=(byte) (byteNuevo | 0x80);
@@ -148,7 +145,7 @@ public class Codificador {
 				}
 			}
 			contador++;
-			if (contador==8){
+			if (contador>7){
 				try{
 					comprimido.write(byteNuevo);
 					contador=0;
@@ -159,6 +156,7 @@ public class Codificador {
 				
 			}
 		}
+
 	}
 
 }
