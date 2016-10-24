@@ -1,13 +1,16 @@
 package estructura;
 
+/**
+ *  Componente utilizado en la estructura TablaHuffman. Compuesto por un dato (byte), una ocurrencia (int), un byte acotado y una referencia a un
+ *  NodoTablaHuffman.
+ * */
 public class NodoTablaHuffman {
-	//	Variables
+	
 	private NodoTablaHuffman siguiente;
 	private byte dato;
 	private String byteAcotado;
 	private int ocurrencia;
-	
-	//	Constructor
+
 	public NodoTablaHuffman(byte dato, String byteAcotado, int ocurrencia, NodoTablaHuffman siguiente) {
 		
 		this.dato=dato;
@@ -15,8 +18,7 @@ public class NodoTablaHuffman {
 		this.ocurrencia=ocurrencia;
 		this.siguiente=siguiente;
 	}
-	
-	//	Geters and Seters
+
 	public NodoTablaHuffman getSiguiente() {
 		return siguiente;
 	}

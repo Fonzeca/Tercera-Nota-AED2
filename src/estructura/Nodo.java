@@ -1,9 +1,11 @@
 package estructura;
-
+/**
+ *  Componente utilizado en la estructura Lista. Compuesto por un info (NodoHuffman) y una referencia a otro Nodo.
+ * */
 public class Nodo {
 
-	NodoHuffman info;
-	Nodo ref;
+	private NodoHuffman info;
+	private Nodo ref;
 
 	public Nodo(byte info, Nodo ref) {
 		this.info = new  NodoHuffman(info);

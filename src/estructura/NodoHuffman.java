@@ -1,11 +1,13 @@
 package estructura;
 
+/**
+ *  Componente utilizado en la estructura ArbolHuffman. Compuesto por un dato (byte), una ocurrencia (int) y dos referencias a dos NodoHuffman.
+ * */
 public class NodoHuffman {
 	
-	Byte dato;
-	NodoHuffman izq;
-	NodoHuffman der;
-	int ocurrencia;
+	private Byte dato;
+	private NodoHuffman izq, der;
+	private int ocurrencia;
 	
 	public NodoHuffman(Byte info) {
 		this.dato = info;

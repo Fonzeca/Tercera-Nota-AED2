@@ -1,9 +1,29 @@
 package estructura;
 
+/**
+ *  Estructura compuesta por nodos que contienen un info (NodoHuffman) y una ocurrencia (int).
+ * */
 public class Lista implements ILista{
-	Nodo primero;
-	int tamaño = 0;
+	private Nodo primero;
+	private int tamaño = 0;
 
+	public int getTamaño() {
+		return tamaño;
+	}
+	public void setTamaño(int tamaño) {
+		this.tamaño = tamaño;
+	}
+	public Nodo getPrimero() {
+		return this.primero;
+	}
+	
+	public void setPrimero(Nodo primero) {
+		this.primero = primero;
+	}
+
+	/**
+	 *  Recibe un byte por parámetro y lo inserta en la lista, En caso de ya existir este dato en la misma, se incrementa su ocurrencia en 1.
+	 * */
 	public void insertar(byte info){
 		if(primero== null){
 			primero = new Nodo(info, null);
@@ -24,6 +44,10 @@ public class Lista implements ILista{
 		}
 		
 	}
+	
+	/**
+	 *  Ordena la lista por ocurrencia y luego por aparición.
+	 * */
 	public void reordenar(){
 		Lista listaAux = new Lista();
 		Nodo aux = primero;
@@ -31,29 +55,13 @@ public class Lista implements ILista{
 		while(aux != null){
 			listaAux.insertarReordenar(aux.getInfo());
 			aux = aux.getRef();
-
 		}
-
 		primero = listaAux.getPrimero();
-
 	}
 	
-	
-	
-	public int getTamaño() {
-		return tamaño;
-	}
-	public void setTamaño(int tamaño) {
-		this.tamaño = tamaño;
-	}
-	public Nodo getPrimero() {
-		return this.primero;
-	}
-
-	public void setPrimero(Nodo primero) {
-		this.primero = primero;
-	}
-
+	/**
+	 *  Inserta un NodoHuffman en la
+	 * */
 	public void insertarReordenar(NodoHuffman nodo){
 		if(primero== null){
 			primero = new Nodo(nodo, null);
@@ -80,6 +88,9 @@ public class Lista implements ILista{
 		
 	}
 	
+	/**
+	 *  Devuelve el info del nodo en la posición recibida por parámetro.
+	 * */
 	public NodoHuffman get(int index){
 		int contador= 0;
 		Nodo aux = primero;
@@ -93,6 +104,9 @@ public class Lista implements ILista{
 		return aux.getInfo();
 	}
 	
+	/**
+	 *  Recorre cada nodo de la lista y muestra el par dato, ocurrencia.
+	 * */
 	public void mostrar(){
 		Nodo aux = primero;
 		while (aux!=null){
@@ -101,6 +115,9 @@ public class Lista implements ILista{
 		}
 	}
 
+	/**
+	 *  Devuelve el info del primer nodo y además lo elimina de la listas.
+	 * */
 	public NodoHuffman extraerPrimero() {
 		NodoHuffman aux = primero.getInfo();
 		primero = primero.getRef();

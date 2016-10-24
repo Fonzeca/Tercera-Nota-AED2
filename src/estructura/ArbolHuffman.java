@@ -1,36 +1,38 @@
 package estructura;
-
+/**
+ *  Estructura tipo árbol compuesta por nodos (NodoHuffman).
+ * */
 public class ArbolHuffman  {
-	private Lista x;
+	private Lista lista;
 	private NodoHuffman raiz;
 	
-	public ArbolHuffman(Lista x){
-		this.x=x;
-		int i=-1;
-		while (x.getPrimero().getRef() != null) {
+	public ArbolHuffman(Lista lista){
+		this.lista=lista;
+		while (this.lista.getPrimero().getRef() != null) {
 			generadorNodo();
 		}
-		raiz=x.getPrimero().getInfo();
-		
-		
+		raiz=this.lista.getPrimero().getInfo();
 	}
-	private void generadorNodo(){
-		NodoHuffman huff=new NodoHuffman(null);
-		huff.setIzq(x.extraerPrimero());
-		huff.setDer(x.extraerPrimero());
-		huff.setOcurrencia(huff.getIzq().getOcurrencia()+huff.getDer().getOcurrencia());
-		x.insertarReordenar(huff);
-	}
-	private int esRaiz(){
-		if(x.getPrimero()!=null && x.getPrimero().getRef()==null){
-			return 1;
-		}
-		return -1;
-	}
+	
 	public NodoHuffman getRaiz() {
 		return raiz;
 	}
+
+	/**
+	 *  Crea un nuevo NodoHuffman con dato nulo que apunta a los dos primeros nodos de la lista y cuya ocurrencia es igual a la suma de las ocurrencias
+	 *  de ambos nodos. Luego, se inserta dicho nodo en el árbol.
+	 * */
+	private void generadorNodo(){
+		NodoHuffman huff=new NodoHuffman(null);
+		huff.setIzq(lista.extraerPrimero());
+		huff.setDer(lista.extraerPrimero());
+		huff.setOcurrencia(huff.getIzq().getOcurrencia()+huff.getDer().getOcurrencia());
+		lista.insertarReordenar(huff);
+	}
 	
+	/**
+	 *  Recorre el árbol recursivamente y muestra cada nodo por entreorden/inorden
+	 * */
 	public void mostrar() {
 		if (raiz != null) {
 			mostrarRecursivo(raiz);

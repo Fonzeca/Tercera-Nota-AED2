@@ -13,8 +13,8 @@ public class Principal {
 		Lista lis = lector.getLista();
 		
 		Lista original =new Lista();
-		original.setTama√±o(lis.getTama√±o());
-		for(int i = 0; i < lis.getTama√±o(); i++){
+		original.setTamaÒo(lis.getTamaÒo());
+		for(int i = 0; i < lis.getTamaÒo(); i++){
 			original.insertarReordenar(lis.get(i));
 		}
 		

@@ -1,40 +1,46 @@
 package estructura;
 
 public class TablaHuffman implements ITablaHuffman{
-
-	//	Variables
 	
 	private NodoTablaHuffman pri; 
-	private int con=0;
+	private int tamaño=0;
 
-	//	Constructor
 	public TablaHuffman(ArbolHuffman arb) {
 		recorrerArbolRecursivo(arb.getRaiz(),"");
 	}
-	
-	//	Métodos 
+
+	public int getTamaño() {		
+		return tamaño;
+	}
+
+	/**
+	 *  Recorre el árbol recursivamente formando una ruta dependiendo si accede a la referencia izquierda (se añade 0 a la ruta) o a la referencia
+	 *  derecha (se añade 1 a la ruta). Al encontrarse con una hoja, inserta en la tabla su dato, ocurrencia, y la ruta actual hasta dicha hoja.
+	 * */
 	private void recorrerArbolRecursivo(NodoHuffman p,String ruta){
-		if(p.izq==null&&p.der==null){
-			insertar(p.dato,ruta,p.ocurrencia);
+		if(p.getIzq()==null&&p.getDer()==null){
+			insertar(p.getDato(),ruta,p.getOcurrencia());
 		}
-		if(p.izq!=null){
-			recorrerArbolRecursivo(p.izq, ruta+"0");
+		if(p.getIzq()!=null){
+			recorrerArbolRecursivo(p.getIzq(), ruta+"0");
 		}
-		if(p.der!=null){
-			recorrerArbolRecursivo(p.der,ruta+"1");
+		if(p.getDer()!=null){
+			recorrerArbolRecursivo(p.getDer(),ruta+"1");
 		}
 		
 	}
-	 
+	
+	/**
+	 *  Inserta un nuevo nodo en la tabla con los datos pasados por parámetro.
+	 * */
 	public void insertar(byte dato, String ruta,int ocurrencia){
 		pri=new NodoTablaHuffman(dato,ruta, ocurrencia,pri);
-		con++;
+		tamaño++;
 	}
 
-	public int getTamaño() {		
-		return con;
-	}
-
+	/**
+	 *  Devuelve el byte acotado correspondiente al byte pasado por parámetro.
+	 * */
 	public String buscar(byte x) {
 		NodoTablaHuffman aux = pri;
 		while(aux!= null){
@@ -45,28 +51,39 @@ public class TablaHuffman implements ITablaHuffman{
 		}
 		
 		return null;
-	}	
-	public boolean existe(String x) {
+	}
+	
+	/**
+	 *  Comprueba si existe un byte que tenga asociado el byte acotado pasado por parámetro.
+	 * */
+	public boolean existe(String byteAcotado) {
 		NodoTablaHuffman aux = pri;
 		while(aux!= null){
-			if(aux.getByteAcotado().equals(x)){
+			if(aux.getByteAcotado().equals(byteAcotado)){
 				return true;
 			}
 			aux = aux.getSiguiente();
 		}
 		return false;
 	}
-	public byte buscarAcotado(String x) {
+	
+	/**
+	 *  Devuelve el byte que tiene asociado a él el byte acotado pasado por parámetro.
+	 * */
+	public byte buscarAcotado(String byteAcotado) {
 		NodoTablaHuffman aux = pri;
 		while(aux!= null){
-			if(aux.getByteAcotado().equals(x)){
+			if(aux.getByteAcotado().equals(byteAcotado)){
 				return aux.getDato();
 			}
 			aux = aux.getSiguiente();
 		}
 		return (Byte) null;
 	}
-	//devuelve el nodo en la posicion "index".
+	
+	/**
+	 *  Devuelve el nodo en la posición pasada por parámetro.
+	 * */
 	public NodoTablaHuffman get(int index){
 		int contador= 0;
 		NodoTablaHuffman aux = pri;
@@ -80,13 +97,14 @@ public class TablaHuffman implements ITablaHuffman{
 		return aux;
 	}
 	
+	/**
+	 *  Recorre cada nodo de la tabla y muestra el dato (byte), el byte acotado y su ocurrencia.
+	 * */
 	public void mostrar(){
 		NodoTablaHuffman aux = pri;
-		int c = 1;
 		while(aux != null){
-			System.out.println(c + ") Dato: " + aux.getDato() + "\tByte acotado: " + aux.getByteAcotado()+"\tOcurrencia: " + aux.getOcurrencia());
+			System.out.println("Dato: " + aux.getDato() + "\tByte acotado: " + aux.getByteAcotado()+"\tOcurrencia: " + aux.getOcurrencia());
 			aux = aux.getSiguiente();
-			c++;
 		}
 	}
 
