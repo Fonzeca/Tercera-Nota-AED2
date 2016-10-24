@@ -9,84 +9,107 @@ public class Codificador {
 	private int contador=0;
 	private byte byteNuevo=0;
 	private String ruta;
-	private RandomAccessFile comprimido,original;
-	private ITablaHuffman th=null;
-	private Lista lista;
+	private RandomAccessFile comprimido, original;
+	private TablaHuffman tabla;
+	private ArbolHuffman arbol;
+	private Lista listaOriginal, listaDuplicada;
 
-	public Codificador(RandomAccessFile original,String ruta,ITablaHuffman th, Lista lista){
-
+	public Codificador(RandomAccessFile original,String ruta){
 		this.original=original;
 		this.ruta= ruta;
 		crearArchivo();
-		this.th=th;
-		this.lista = lista;
 	}
 
-	public void codificar( ){
-		
-
+	/**
+	 *	Método para crear el archivo comprimido
+	 * */
+	private void crearArchivo(){
 		try{
-			escribirCabecera();
-			//Escritura de bytes comprimidos.
-			
-			int aux;
-			while((aux=original.read())!=-1){
-				String byteComprimido=th.buscar((byte)aux);
-				escribirBytes(byteComprimido);
-			}
-			
-			comprimido.write(byteNuevo);
-			
-			//Tamaño de este archivo
-			comprimido.seek(14);
-			guardarDWord(comprimido.length());
-			original.close();
+			String rutaNueva=ruta.substring(0, ruta.length()-3)+"c21";
+			comprimido= new RandomAccessFile(new File(rutaNueva), "rw");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 
-	public void crearArchivo(){
+	/**
+	 *	Proceso completo de compresión del archivo
+	 * */
+	public void comprimir(){
 		try{
-			String rutaNueva=ruta.substring(0, ruta.length()-4)+".c21";
-			comprimido= new RandomAccessFile(new File(rutaNueva), "rw");
+			listaOriginal = crearLista();
+			listaDuplicada = crearLista();
 			
+			arbol = new ArbolHuffman(listaOriginal);
+			tabla = new TablaHuffman(arbol);
+			
+			escribirCabecera();
+			
+			//Escritura de bytes comprimidos.
+			
+			int aux;
+			while((aux=original.read())!=-1){
+				String byteComprimido=tabla.buscar((byte)aux);
+				escribirBytes(byteComprimido);
+			}
+			
+			// Se escribe el último byte en caso de que el contador no haya llegado a 8
+			if(contador > 0){
+				comprimido.write(byteNuevo);
+			}
+			// Tamaño de este archivo
+			comprimido.seek(14);
+			guardarDWord(comprimido.length());
+			original.close();
+			comprimido.close();
 		}catch(Exception e){
-			System.err.println(e);
+			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Escritura de la cabecera completa
+	 * */
 	public void escribirCabecera(){
 		try {
-			//c21.
+			//c21
 			comprimido.write('c');
 			comprimido.write('2');
 			comprimido.write('1');
-			//extensión archivo original.
+			//extensión archivo original
 			String extension=ruta.substring(ruta.length()-3);
 			for (int i =0;i<extension.length();i++){
 				comprimido.write(extension.charAt(i));
 			}
-			//tamaño del archivo original.
+			//tamaño del archivo original
 			guardarDWord(original.length());
-			//posición comienzo de los datos comprimidos
-
+			
+			// cantidad de nodos de la tabla
 			comprimido.seek(18);
-			comprimido.write(lista.getTamaño()-1);
-			for (int i=0;i<lista.getTamaño();i++){
-				NodoHuffman nodoHuffman = lista.get(i);
+			comprimido.write(listaDuplicada.getTamaño()-1);
+			
+			// grabado de la tabla
+			for (int i=0;i<listaDuplicada.getTamaño();i++){
+				NodoHuffman nodoHuffman = listaDuplicada.get(i);
 				comprimido.write(nodoHuffman.getDato());
 				guardarDWord(nodoHuffman.getOcurrencia());
 			}
+			
+			// posición de comienzo de los datos comprimidos
 			long posicionCompri = comprimido.getFilePointer();
 			comprimido.seek(10);
 			guardarDWord(posicionCompri);
 			comprimido.seek(posicionCompri);
 			
-		} catch (IOException e) {
-			System.err.println(e);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 	}
+	
+	/**
+	 * Toma un dato de tipo long (4 bytes) y guarda en el archivo cada uno de los 4 bytes, de más significativo a menos significativo
+	 * */
 	public void guardarDWord(long x){
 		for(int i = 0; i < 4; i++){
 			long y = x & 0xFF;
@@ -94,23 +117,48 @@ public class Codificador {
 				comprimido.write((int)y);
 				x = x >> 8;
 			} catch (Exception e) {
-				System.err.println(e);
+				e.printStackTrace();
 			}
 		}
 	}
 
+	/**
+	 * Recorre el archivo completo y crea una lista enlazada con datos (byte) y sus ocurrencias en el mismo
+	 * */
+	private Lista crearLista(){
+		try {
+			Lista lista = new Lista();
+			for (int i = 0; i < original.length(); i++) {
+				lista.insertar(original.readByte());
+			}
+			lista.reordenar();
+			original.seek(0);
+			return lista;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
+	/**
+	 * Devuelve el tamañp del archivo comprimido
+	 * */
 	public long getTamañoComprimido(){
 		long tamaño=0;
 		try{
 			tamaño= comprimido.length();
 			
-		}catch(IOException ex){
-			System.err.println(ex);
+		}catch(IOException e){
+			e.printStackTrace();
 		}
 		return tamaño;
 	}
 	
+	/**
+	 * Recibe un byte acotado (menor a 8 bits) por parámetro. Se analiza cada bit de este byte acotado y, en caso de valer 1, se aplica una máscara
+	 * sobre un otro byte en la posición que indique un contador. Cada vez que se lee un bit del byte acotado, el contador aumenta en 1. Al llegar a
+	 * 8, el byte se escribe en el archivo y el contador se resetea a 0
+	 * */
 	public void escribirBytes(String byteComprimido){
 		
 		for (int i=0; i<byteComprimido.length();i++){
@@ -151,7 +199,7 @@ public class Codificador {
 					contador=0;
 					byteNuevo=0;
 				}catch(Exception e){
-					System.err.println(e);
+					e.printStackTrace();
 				}
 				
 			}

@@ -25,7 +25,7 @@ public class ThreadComprimir extends Thread {
 		TablaHuffman th = new TablaHuffman(ah);
 		try {
 			Codificador cod = new Codificador(new RandomAccessFile(ruta, "rw"), ruta, th);
-			cod.codificar();
+			cod.comprimir();
 		} catch (FileNotFoundException e) {
 			System.out.println("SHE LOCO");
 			e.printStackTrace();

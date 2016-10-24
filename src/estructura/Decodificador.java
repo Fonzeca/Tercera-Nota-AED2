@@ -15,25 +15,34 @@ public class Decodificador {
 		this.ruta = ruta;
 	}
 
-	public void creardescomprimido(){
+	public void descomprimir(){
 		try{
 			
+			// Extensión del archivo original
 			char c1,c2,c3;
 			comprimido.seek(3);
 			c1 = (char)comprimido.read();
 			c2 = (char)comprimido.read();
 			c3 = (char)comprimido.read();
-
+			
+			// Creación del archivo descomprimido
 			String rutaNva = ruta.substring(0,ruta.length()-4)+"Descomprimido."+c1+c2+c3;
 			descomprimido = new RandomAccessFile(rutaNva, "rw");
+			
+			
 			tamañoOriginal = leerDWord(6);
+			armarTabla();
+			leerDatosComprimidos((byte) comprimido.read());
+			descomprimido.close();
+			comprimido.close();
 		}catch(Exception e){
-			System.out.println(e);
-
+			e.printStackTrace();
 		}
 	}
 
-	// este metodo lee un dobleword de corrido.
+	/**
+	 * Lee 4 bytes del archivo y construye un dato de tipo long con estos 4 bytes
+	 */
 	public long leerDWord(int seek){
 		long aux= 0; 
 		try {
@@ -48,12 +57,11 @@ public class Decodificador {
 		return aux;
 	}
 
-	public void decodificar(int posicion){
-
-	}
-	public void armarTabla(){
+	/**
+	 * Lee la parte de la cabecera donde se encuentra la tabla para reconstruirla
+	 * */
+	private void armarTabla(){
 		try {
-
 			comprimido.seek(18);
 			Lista lista = new Lista();
 			int c = comprimido.read();//cantidad de nodos e nla cabezera del archivo.
@@ -68,15 +76,16 @@ public class Decodificador {
 			}
 			ArbolHuffman hf = new ArbolHuffman(lista);
 			th = new TablaHuffman(hf);
-			leerByteComp((byte) comprimido.read());
-			descomprimido.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void leerByteComp(byte byteActual){
+	/**
+	 * Lectura completa de los datos comprimidos. Cuando el tamaño del archivo descomprimido es igual al del archivo original, se detiene la lectura
+	 * */
+	public void leerDatosComprimidos(byte byteActual){
 		String respuesta = "";
 		int bitActual = 1;
 		Byte siguienteBit;
