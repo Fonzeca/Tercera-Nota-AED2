@@ -85,11 +85,15 @@ public class Hoja extends JPanel {
 				if(jfc.showOpenDialog(((JButton)e.getSource()).getParent().getParent()) == JFileChooser.APPROVE_OPTION){
 					File f = jfc.getSelectedFile();
 					campo.setText(f.getAbsolutePath());
-					comprimir.setEnabled(true);
 					if(f.getName().endsWith(".c21")){
+						comprimir.setEnabled(false);
 						descomprimir.setEnabled(true);
+					}else{
+						descomprimir.setEnabled(false);
+						comprimir.setEnabled(true);
 					}
 				}else{
+					
 				}
 			}
 		});
