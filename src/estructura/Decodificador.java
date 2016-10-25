@@ -3,36 +3,50 @@ package estructura;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import visual.VentanaDescomprimir;
+
 public class Decodificador {
 
 	private String ruta;
 	private RandomAccessFile descomprimido,comprimido;
 	private TablaHuffman th = null;
 	private long tamañoOriginal, tamañoDescomprimido = 0;
+	private VentanaDescomprimir venDes;
 
-	public Decodificador(RandomAccessFile comprimido,String ruta) {
+	public Decodificador(RandomAccessFile comprimido,String ruta, VentanaDescomprimir venDes) {
 		this.comprimido= comprimido;
 		this.ruta = ruta;
+		this.venDes = venDes;
 	}
 
 	public void descomprimir(){
 		try{
 			
 			// Extensión del archivo original
+			venDes.actualizar(1, false);
 			char c1,c2,c3;
 			comprimido.seek(3);
 			c1 = (char)comprimido.read();
 			c2 = (char)comprimido.read();
 			c3 = (char)comprimido.read();
 			
+			venDes.actualizarExt("." +c1+c2+c3);
+			
 			// Creación del archivo descomprimido
 			String rutaNva = ruta.substring(0,ruta.length()-4)+"Descomprimido."+c1+c2+c3;
 			descomprimido = new RandomAccessFile(rutaNva, "rw");
-			
-			
 			tamañoOriginal = leerDWord(6);
+			venDes.actualizar(1, true);
+			
+			venDes.actualizar(2, false);
 			armarTabla();
+			venDes.actualizar(2, true);
+			
+			
+			venDes.actualizar(3, false);
 			leerDatosComprimidos((byte) comprimido.read());
+			
+			venDes.actualizar(3, true);
 			descomprimido.close();
 			comprimido.close();
 		}catch(Exception e){

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import visual.VentanaComprimir;
+
 public class Codificador {
 
 	private int contador=0;
@@ -13,10 +15,13 @@ public class Codificador {
 	private TablaHuffman tabla;
 	private ArbolHuffman arbol;
 	private Lista listaOriginal, listaDuplicada;
+	
+	private VentanaComprimir venCom;
 
-	public Codificador(RandomAccessFile original,String ruta){
+	public Codificador(RandomAccessFile original,String ruta, VentanaComprimir venCom){
 		this.original=original;
 		this.ruta= ruta;
+		this.venCom = venCom;
 		crearArchivo();
 	}
 
@@ -37,12 +42,20 @@ public class Codificador {
 	 * */
 	public void comprimir(){
 		try{
+			venCom.actualizar(1, false);
 			listaOriginal = crearLista();
 			listaDuplicada = crearLista();
+			venCom.actualizar(1, true);
 			
+			venCom.actualizar(2, false);
 			arbol = new ArbolHuffman(listaOriginal);
-			tabla = new TablaHuffman(arbol);
+			venCom.actualizar(2, true);
 			
+			venCom.actualizar(3, false);
+			tabla = new TablaHuffman(arbol);
+			venCom.actualizar(3, true);
+			
+			venCom.actualizar(4, false);
 			escribirCabecera();
 			
 			//Escritura de bytes comprimidos.
@@ -60,8 +73,12 @@ public class Codificador {
 			// Tamaño de este archivo
 			comprimido.seek(14);
 			guardarDWord(comprimido.length());
+			venCom.actualizarRatios((float)comprimido.length()/original.length(), (float)original.length()/comprimido.length());
+			
 			original.close();
 			comprimido.close();
+			venCom.actualizar(4, true);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -139,7 +156,7 @@ public class Codificador {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Devuelve el tamañp del archivo comprimido
 	 * */

@@ -11,7 +11,7 @@ public class Ventana extends JFrame{
 	public Ventana() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(ANCHO,ALTO);
-		setTitle("Compresor C21 por lo pibe mas borracho del tablon");
+		setTitle("Codificador C21");
 		setLocationRelativeTo(null);
 		setResizable(false);
 		hoja = new Hoja();
