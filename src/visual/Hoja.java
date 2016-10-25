@@ -34,6 +34,9 @@ public class Hoja extends JPanel {
 				if(f.isDirectory()){
 					return true;
 				}
+				if(f.getName().endsWith(".c21")){
+					return false;
+				}
 				if(s.length() > 4){
 					return s.subSequence(s.length()-4, s.length()).charAt(0)== '.';
 				}else{
@@ -103,8 +106,9 @@ public class Hoja extends JPanel {
 						if(f.exists()){
 							if(s.endsWith(".c21")){
 								descomprimir.setEnabled(true);
+							}else{
+								comprimir.setEnabled(true);
 							}
-							comprimir.setEnabled(true);
 						}else{
 							descomprimir.setEnabled(false);
 							comprimir.setEnabled(false);
